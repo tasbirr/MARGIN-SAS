@@ -1,4 +1,4 @@
-// Frontend JS for NI Evaluation Dashboard
+// Frontend JS for MARGIN-SAS Dashboard
 
 function el(id) { return document.getElementById(id); }
 
@@ -819,7 +819,7 @@ async function downloadStudyReport() {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'ni_study_report.pdf';
+        a.download = 'margin_sas_study_report.pdf';
         document.body.appendChild(a);
         a.click();
         a.remove();

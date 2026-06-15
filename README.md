@@ -1,6 +1,6 @@
-# NI Evaluation Backend
+# MARGIN-SAS
 
-A Flask REST API and dashboard for evaluating Self-Adaptive Systems (SAS) decision-making techniques using Non-Inferiority (NI) trial logic.
+MARGIN-SAS is a Flask REST API and dashboard for evaluating Self-Adaptive Systems (SAS) decision-making techniques using Non-Inferiority (NI) trial logic.
 
 ## Quick start (Windows, macOS, Linux)
 
@@ -73,10 +73,10 @@ Tip: If you have multiple Python versions installed, prefer `py -3.13` (Windows)
 In the submission zip, the real datasets live in the sibling `Data/` folder at the top level:
 
 DataCodeLogbook/
-- ni-eval-code/
+- MARGIN-SAS/
 - Data/
 
-From the `ni-eval-code/` folder, the dataset paths are:
+From the `MARGIN-SAS/` folder, the dataset paths are:
 - ../Data/IoT data used
 - ../Data/NI_DatSet_IoT
 - ../Data/NI_Trial_DataSet_RDMSim
@@ -314,7 +314,7 @@ Run artifacts (metadata, JSON, PDF) are stored in `runs/`.
 The submitted zip is organised as:
 
 DataCodeLogbook/
-- ni-eval-code/        Source code, dashboard, API, tests, README, requirements
+- MARGIN-SAS/          Source code, dashboard, API, tests, README, requirements
 - Data/                Full provided datasets and selected report datasets
 - Logbook/             ECM3401 activity logbook
 

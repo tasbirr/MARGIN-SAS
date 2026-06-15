@@ -10,7 +10,7 @@ os.makedirs('data', exist_ok=True)
 from app import app
 
 if __name__ == '__main__':
-    print("Starting NI Evaluation API Server...")
+    print("Starting MARGIN-SAS API Server...")
     print("Server running at http://127.0.0.1:5000")
     print("Press Ctrl+C to stop")
     app.run(host='127.0.0.1', port=5000, debug=False, use_reloader=False)

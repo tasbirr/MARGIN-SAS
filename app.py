@@ -1,5 +1,5 @@
 """
-NI Evaluation Backend (Prototype)
+MARGIN-SAS Backend (Prototype)
 
 This Flask backend is a prototype for evaluating Self-Adaptive System (SAS)
 decision-making techniques using Non-Inferiority (NI) trial logic.
@@ -722,7 +722,7 @@ def render_study_report_pdf(payload: dict) -> bytes:
         pdf.drawString(left + 130, y, str(value))
         y -= 13
 
-    draw_title("Non-Inferiority Evaluation Report")
+    draw_title("MARGIN-SAS Evaluation Report")
     draw_subtitle(f"Generated: {datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}")
     draw_subtitle("Prepared for stakeholder review")
 
@@ -812,7 +812,7 @@ def study_report_pdf():
     pdf_bytes = render_study_report_pdf(payload)
     resp = make_response(pdf_bytes)
     resp.headers["Content-Type"] = "application/pdf"
-    resp.headers["Content-Disposition"] = "attachment; filename=ni_study_report.pdf"
+    resp.headers["Content-Disposition"] = "attachment; filename=margin_sas_study_report.pdf"
     return resp
 
 
@@ -1833,7 +1833,7 @@ def run_non_inferiority_test(
 # Root health-check
 @app.route("/")
 def index():
-    return jsonify({"status": "ok", "message": "NI Evaluation backend running"})
+    return jsonify({"status": "ok", "message": "MARGIN-SAS backend running"})
 
 
 # Frontend static files (separated into `frontend/` directory)
