@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Implemented non-inferiority, synthesis, Bayesian, equivalence, and multi-objective decision rules in NI-SAS.">
+    <title>Methods | NI-SAS</title>
+    <link rel="stylesheet" href="/frontend/css/styles.css">
+</head>
+<body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <div class="container">
+        <header class="site-header">
+            <nav class="top-nav" aria-label="Primary navigation">
+                <a href="/dashboard" class="nav-brand">NI-SAS</a>
+                <div class="nav-actions">
+                    <div class="nav-links">
+                        <a href="/dashboard">Home</a>
+                        <a href="/dashboard/evaluate">Evaluate</a>
+                        <a href="/dashboard/methods" class="active" aria-current="page">Methods</a>
+                    </div>
+                    <div class="theme-toggle" aria-label="Colour theme">
+                        <button type="button" class="theme-option active" data-theme-option="light" aria-label="Use light mode" aria-pressed="true" title="Light mode">
+                            <svg aria-hidden="true" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="4"></circle>
+                                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+                            </svg>
+                        </button>
+                        <button type="button" class="theme-option" data-theme-option="dark" aria-label="Use dark mode" aria-pressed="false" title="Dark mode">
+                            <svg aria-hidden="true" viewBox="0 0 24 24">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <main id="main" class="methods-page">
+            <section class="methods-hero" aria-labelledby="methodsTitle">
+                <div>
+                    <p class="eyebrow">Statistical specification</p>
+                    <h1 id="methodsTitle">Methods Implemented</h1>
+                    <p class="subtitle">The dashboard applies one shared direction convention across five analysis routes and the multi-objective portfolio layer.</p>
+                </div>
+                <div class="method-summary-grid" aria-label="Method coverage summary">
+                    <div>
+                        <strong>5</strong>
+                        <span>analysis routes</span>
+                    </div>
+                    <div>
+                        <strong>3</strong>
+                        <span>portfolio modes</span>
+                    </div>
+                    <div>
+                        <strong>1</strong>
+                        <span>effect orientation</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="margin-section" aria-labelledby="methodCardsTitle">
+                <div class="section-header">
+                    <p class="eyebrow">Decision rules</p>
+                    <h2 id="methodCardsTitle">Implemented analysis routes</h2>
+                    <p>Each method exposes the margin, uncertainty model, and acceptance criterion used by the backend.</p>
+                </div>
+
+                <div class="margin-grid methods-five">
+                    <article class="margin-card static-card">
+                        <div class="margin-card-header">
+                            <span class="margin-title">Fixed-margin 95-95</span>
+                            <span class="badge preferred">Primary</span>
+                        </div>
+                        <p class="formula"><strong>Margin:</strong> <code>d_NI = M1_lower * (1 - p)</code></p>
+                        <p><strong>Decision:</strong> non-inferior when the CI upper bound is <code>&lt;= d_NI</code>.</p>
+                    </article>
+
+                    <article class="margin-card static-card">
+                        <div class="margin-card-header">
+                            <span class="margin-title">Synthesis / putative-placebo</span>
+                            <span class="badge">Historical</span>
+                        </div>
+                        <p class="formula"><strong>Margin:</strong> inverse-variance pooled historical effects, then lower-bound margin.</p>
+                        <p><strong>Decision:</strong> non-inferior when the CI upper bound is <code>&lt;= d_NI,synthesis</code>.</p>
+                    </article>
+
+                    <article class="margin-card static-card">
+                        <div class="margin-card-header">
+                            <span class="margin-title">Bayesian NI</span>
+                            <span class="badge">Posterior</span>
+                        </div>
+                        <p class="formula"><strong>Model:</strong> Normal prior plus Normal likelihood for the worsening effect.</p>
+                        <p><strong>Decision:</strong> pass when <code>P(effect &lt;= d_NI)</code> meets the configured threshold.</p>
+                    </article>
+
+                    <article class="margin-card static-card">
+                        <div class="margin-card-header">
+                            <span class="margin-title">Equivalence</span>
+                            <span class="badge">Two-sided</span>
+                        </div>
+                        <p class="formula"><strong>Margin:</strong> symmetric <code>+/- d</code> around zero worsening effect.</p>
+                        <p><strong>Decision:</strong> equivalent when the full CI sits inside <code>[-d, +d]</code>.</p>
+                    </article>
+
+                    <article class="margin-card static-card">
+                        <div class="margin-card-header">
+                            <span class="margin-title">Mean-based</span>
+                            <span class="badge">Legacy</span>
+                        </div>
+                        <p class="formula"><strong>Margin:</strong> <code>d_NI = M1 * (1 - p)</code></p>
+                        <p><strong>Decision:</strong> non-inferior when the point effect is <code>&lt;= d_NI</code>.</p>
+                    </article>
+                </div>
+            </section>
+
+            <section class="method-panels" aria-label="Method interpretation notes">
+                <article class="method-note-panel">
+                    <p class="eyebrow">Orientation</p>
+                    <h2>Direction convention</h2>
+                    <ul>
+                        <li>Lower-better metrics such as latency, energy, cost, and response time use <code>treatment - baseline</code>.</li>
+                        <li>Higher-better metrics such as throughput and accuracy use <code>baseline - treatment</code>.</li>
+                        <li>A larger worsening effect always means worse treatment performance.</li>
+                    </ul>
+                </article>
+
+                <article class="method-note-panel">
+                    <p class="eyebrow">Portfolio layer</p>
+                    <h2>Multi-objective decision rules</h2>
+                    <ul>
+                        <li><strong>Strict:</strong> every selected metric must pass.</li>
+                        <li><strong>Weighted:</strong> normalized weights create an acceptability score.</li>
+                        <li><strong>Gatekeeper:</strong> mandatory metrics pass first, then weighted acceptability is applied.</li>
+                    </ul>
+                </article>
+            </section>
+
+            <section class="comparison-table-wrap" aria-labelledby="comparisonTitle">
+                <div class="table-heading">
+                    <div>
+                        <p class="eyebrow">Selection guide</p>
+                        <h2 id="comparisonTitle">Quick comparison</h2>
+                    </div>
+                    <a class="secondary-link compact-link" href="/dashboard/evaluate">Run an evaluation</a>
+                </div>
+                <div class="table-scroll">
+                    <table class="comparison-table">
+                        <caption>Comparison of implemented NI-SAS methods</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Method</th>
+                                <th scope="col">Uncertainty</th>
+                                <th scope="col">Best use</th>
+                                <th scope="col">Main limitation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">Fixed-margin 95-95</th>
+                                <td>Frequentist CI</td>
+                                <td>Primary NI decision</td>
+                                <td>Requires meaningful baseline-placebo effect</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Synthesis</th>
+                                <td>Pooled historical CI</td>
+                                <td>Historical evidence integration</td>
+                                <td>Depends on compatible historical studies</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Bayesian NI</th>
+                                <td>Posterior probability</td>
+                                <td>Prior-informed decisions</td>
+                                <td>Sensitive to prior mean and SD choices</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Equivalence</th>
+                                <td>Two-sided CI</td>
+                                <td>Practical sameness claims</td>
+                                <td>Needs a defensible symmetric bound</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Mean-based</th>
+                                <td>Point estimate only</td>
+                                <td>Fast baseline diagnostics</td>
+                                <td>Does not preserve interval uncertainty</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="/frontend/js/app.js" defer></script>
+</body>
+</html>

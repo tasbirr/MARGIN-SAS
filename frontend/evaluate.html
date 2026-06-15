@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Run NI-SAS non-inferiority analyses with method comparison, Bayesian posterior plots, sensitivity checks, and exportable reports.">
+    <title>Evaluate | NI-SAS</title>
+    <link rel="stylesheet" href="/frontend/css/styles.css">
+</head>
+<body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <div class="container">
+        <header class="site-header">
+            <nav class="top-nav" aria-label="Primary navigation">
+                <a href="/dashboard" class="nav-brand">NI-SAS</a>
+                <div class="nav-actions">
+                    <div class="nav-links">
+                        <a href="/dashboard">Home</a>
+                        <a href="/dashboard/evaluate" class="active" aria-current="page">Evaluate</a>
+                        <a href="/dashboard/methods">Methods</a>
+                    </div>
+                    <div class="theme-toggle" aria-label="Colour theme">
+                        <button type="button" class="theme-option active" data-theme-option="light" aria-label="Use light mode" aria-pressed="true" title="Light mode">
+                            <svg aria-hidden="true" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="4"></circle>
+                                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+                            </svg>
+                        </button>
+                        <button type="button" class="theme-option" data-theme-option="dark" aria-label="Use dark mode" aria-pressed="false" title="Dark mode">
+                            <svg aria-hidden="true" viewBox="0 0 24 24">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <main id="main" class="evaluate-page">
+            <section class="evaluate-hero" aria-labelledby="evaluateTitle">
+                <div>
+                    <p class="eyebrow">Evaluation studio</p>
+                    <h1 id="evaluateTitle">Run a non-inferiority analysis</h1>
+                    <p class="subtitle">Configure datasets, assumptions, method comparison, and reproducible outputs from one workspace.</p>
+                </div>
+                <div class="hero-chip-row" aria-label="Available analysis capabilities">
+                    <span class="hero-chip">Direction-aware metrics</span>
+                    <span class="hero-chip">Bayesian priors</span>
+                    <span class="hero-chip">Synthesis pooling</span>
+                    <span class="hero-chip">Equivalence bounds</span>
+                </div>
+            </section>
+
+            <section class="method-picker" id="margins" aria-labelledby="methodPickerTitle">
+                <div class="section-header compact">
+                    <p class="eyebrow">Analysis route</p>
+                    <h2 id="methodPickerTitle">Choose analysis method</h2>
+                    <p>The selected method controls the headline verdict and primary effect plot after a run.</p>
+                </div>
+                <div class="margin-grid methods-five" role="list" aria-label="Analysis methods">
+                    <button type="button" class="margin-card selected" data-method="ci_based" id="methodCi" aria-pressed="true">
+                        <div class="margin-card-header">
+                            <span class="margin-title">Fixed-margin 95-95</span>
+                            <span class="badge preferred">Primary</span>
+                        </div>
+                        <p>Conservative frequentist NI with upper CI &lt;= d_NI decision rule.</p>
+                    </button>
+                    <button type="button" class="margin-card" data-method="synthesis" id="methodSynthesis" aria-pressed="false">
+                        <div class="margin-card-header">
+                            <span class="margin-title">Synthesis</span>
+                            <span class="badge">Historical</span>
+                        </div>
+                        <p>Pools historical M1 studies to derive a robust margin estimate.</p>
+                    </button>
+                    <button type="button" class="margin-card" data-method="bayesian" id="methodBayesian" aria-pressed="false">
+                        <div class="margin-card-header">
+                            <span class="margin-title">Bayesian NI</span>
+                            <span class="badge">Posterior</span>
+                        </div>
+                        <p>Reports P(effect &lt;= d_NI) against a configurable threshold.</p>
+                    </button>
+                    <button type="button" class="margin-card" data-method="equivalence" id="methodEquivalence" aria-pressed="false">
+                        <div class="margin-card-header">
+                            <span class="margin-title">Equivalence</span>
+                            <span class="badge">+/- margin</span>
+                        </div>
+                        <p>Passes only when the CI lies entirely inside [-d, +d].</p>
+                    </button>
+                    <button type="button" class="margin-card" data-method="mean_based" id="methodMean" aria-pressed="false">
+                        <div class="margin-card-header">
+                            <span class="margin-title">Mean-based</span>
+                            <span class="badge">Legacy</span>
+                        </div>
+                        <p>Point-estimate comparator for quick diagnostics.</p>
+                    </button>
+                </div>
+            </section>
+
+            <div class="form-section" id="evaluate">
+                <form id="uploadForm">
+                    <section class="form-block">
+                        <h2>Input format</h2>
+                        <div class="form-row">
+                            <div class="form-group full-row">
+                                <label for="inputMode">Dataset layout</label>
+                                <select id="inputMode" name="input_mode">
+                                    <option value="separate_files" selected>Separate files: placebo, baseline, treatment</option>
+                                    <option value="single_file_columns">Single file with three mapped columns</option>
+                                    <option value="manual_entry">Manual entry: paste numeric values</option>
+                                </select>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="form-block mode-section" id="singleFileSection" aria-labelledby="singleFileTitle">
+                        <h2 id="singleFileTitle">Single-file column mapping</h2>
+                        <div class="form-row">
+                            <div class="form-group full-row">
+                                <label for="combinedFile">Combined CSV/TXT file</label>
+                                <input type="file" id="combinedFile" name="combined_file" accept=".csv,.txt" data-required="true">
+                                <div class="file-names" id="combinedName" aria-live="polite"></div>
+                            </div>
+                            <div class="form-group check-group">
+                                <label class="choice-label">
+                                    <input type="checkbox" id="combinedHasHeader" name="combined_has_header" checked>
+                                    File has header row
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="placeboColumn">Placebo column</label>
+                                <select id="placeboColumn" name="placebo_column" data-required="true"></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="baselineColumn">Baseline column</label>
+                                <select id="baselineColumn" name="baseline_column" data-required="true"></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="treatmentColumn">Treatment column</label>
+                                <select id="treatmentColumn" name="treatment_column" data-required="true"></select>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="form-block mode-section" id="manualEntrySection" aria-labelledby="manualEntryTitle">
+                        <h2 id="manualEntryTitle">Manual values</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="placeboValues">Placebo values</label>
+                                <textarea id="placeboValues" name="placebo_values" rows="5" placeholder="Example: 10, 12, 11 or one value per line" data-required="true"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="baselineValues">Baseline values</label>
+                                <textarea id="baselineValues" name="baseline_values" rows="5" placeholder="Example: 9, 10, 11" data-required="true"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="treatmentValues">Treatment values</label>
+                                <textarea id="treatmentValues" name="treatment_values" rows="5" placeholder="Example: 10, 10, 12" data-required="true"></textarea>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="form-block mode-section active" id="separateFilesSection" aria-labelledby="separateFilesTitle">
+                        <h2 id="separateFilesTitle">1. Upload datasets</h2>
+                        <div class="form-row files-row">
+                            <div class="form-group">
+                                <label for="placebo">Placebo file (.csv/.txt)</label>
+                                <input type="file" id="placebo" name="placebo_file" accept=".csv,.txt" required data-required="true">
+                                <div class="file-names" id="placeboName" aria-live="polite"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="baseline">Baseline file (.csv/.txt)</label>
+                                <input type="file" id="baseline" name="baseline_file" accept=".csv,.txt" required data-required="true">
+                                <div class="file-names" id="baselineName" aria-live="polite"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="treatment">Treatment file (.csv/.txt)</label>
+                                <input type="file" id="treatment" name="treatment_file" accept=".csv,.txt" required data-required="true">
+                                <div class="file-names" id="treatmentName" aria-live="polite"></div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="form-block">
+                        <h2>2. Core NI settings</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="metric">Metric</label>
+                                <select id="metric" name="metric" required>
+                                    <option value="">Select metric</option>
+                                    <option value="latency">Latency (lower is better)</option>
+                                    <option value="throughput">Throughput (higher is better)</option>
+                                    <option value="accuracy">Accuracy (higher is better)</option>
+                                    <option value="energy">Energy (lower is better)</option>
+                                    <option value="cost">Operational cost (lower is better)</option>
+                                    <option value="response_time">Response time (lower is better)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="preservation">Preservation fraction <span class="tip" tabindex="0" data-tip="Fraction of baseline benefit that must be preserved. Higher values create stricter NI margins." aria-label="Fraction of baseline benefit that must be preserved.">i</span></label>
+                                <input type="number" id="preservation" name="preservation_fraction" value="0.8" min="0" max="1" step="0.05">
+                            </div>
+                            <div class="form-group">
+                                <label for="equivalenceMargin">Equivalence margin d <span class="optional-label">(optional)</span> <span class="tip" tabindex="0" data-tip="Two-sided acceptance bound used for equivalence. The CI must lie within [-d, +d]." aria-label="Two-sided acceptance bound used for equivalence.">i</span></label>
+                                <input type="number" id="equivalenceMargin" name="equivalence_margin" placeholder="Blank uses |d_NI|" min="0.00001" step="0.01">
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="form-block">
+                        <h2>3. Multi-objective settings</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="metricsList">Metrics list</label>
+                                <input type="text" id="metricsList" name="metrics" placeholder="latency,throughput,accuracy">
+                                <small class="helper-text">Comma-separated. Multi-metric mode uses separate files.</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="decisionMode">Decision mode</label>
+                                <select id="decisionMode" name="decision_mode">
+                                    <option value="strict" selected>Strict: all must pass</option>
+                                    <option value="weighted">Weighted acceptability</option>
+                                    <option value="gatekeeper">Gatekeeper + weighted</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="metricWeights">Metric weights</label>
+                                <input type="text" id="metricWeights" name="metric_weights" placeholder="latency:0.5,throughput:0.3,accuracy:0.2">
+                            </div>
+                            <div class="form-group">
+                                <label for="gatekeeperMetrics">Gatekeeper metrics</label>
+                                <input type="text" id="gatekeeperMetrics" name="gatekeeper_metrics" placeholder="latency,accuracy">
+                            </div>
+                            <div class="form-group">
+                                <label for="weightedThreshold">Weighted threshold</label>
+                                <input type="number" id="weightedThreshold" name="weighted_threshold" value="0.7" min="0" max="1" step="0.05">
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="form-block compact">
+                        <h2>4. Sensitivity what-if</h2>
+                        <div class="form-row slider-row">
+                            <div class="form-group full-row">
+                                <label for="preservationSlider">Preservation slider (p): <span id="preservationSliderValue">0.80</span></label>
+                                <input type="range" id="preservationSlider" min="0.50" max="0.95" step="0.01" value="0.80">
+                                <small class="helper-text">Adjust p, then re-evaluate with the slider value.</small>
+                            </div>
+                            <button type="button" id="applySliderBtn" class="small">Re-evaluate with slider</button>
+                        </div>
+                    </section>
+
+                    <section class="form-block">
+                        <h2>5. Bayesian and bootstrap settings</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="bayesPriorMean">Bayesian prior mean <span class="tip" tabindex="0" data-tip="Prior expected worsening effect before seeing current data." aria-label="Prior expected worsening effect before seeing current data.">i</span></label>
+                                <input type="number" id="bayesPriorMean" name="bayes_prior_mean" value="0" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label for="bayesPriorSd">Bayesian prior SD <span class="tip" tabindex="0" data-tip="Uncertainty in prior belief. Larger SD means weaker prior influence." aria-label="Uncertainty in prior belief.">i</span></label>
+                                <input type="number" id="bayesPriorSd" name="bayes_prior_sd" value="10" min="0.0001" step="any">
+                            </div>
+                            <div class="form-group">
+                                <label for="bayesThreshold">Bayesian NI threshold <span class="tip" tabindex="0" data-tip="Required posterior probability cutoff for NI, for example 0.95." aria-label="Required posterior probability cutoff for NI.">i</span></label>
+                                <input type="number" id="bayesThreshold" name="bayes_threshold" value="0.95" min="0.5" max="0.999" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label for="bootstrapResamples">Bootstrap resamples <span class="tip" tabindex="0" data-tip="Number of bootstrap iterations used for robust CI estimation. Recommended range is 1000 to 5000." aria-label="Number of bootstrap iterations used for robust CI estimation.">i</span></label>
+                                <input type="number" id="bootstrapResamples" name="bootstrap_resamples" value="1000" min="200" max="20000" step="100">
+                            </div>
+                            <div class="form-group">
+                                <label for="bootstrapSeed">Bootstrap random seed <span class="optional-label">(optional)</span></label>
+                                <input type="number" id="bootstrapSeed" name="bootstrap_seed" placeholder="42" min="0" step="1">
+                            </div>
+                            <div class="form-group">
+                                <label for="bootstrapMode">Bootstrap mode</label>
+                                <select id="bootstrapMode" name="bootstrap_mode">
+                                    <option value="iid" selected>IID: assumes independence</option>
+                                    <option value="block">Block bootstrap: dependence-aware</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="bootstrapBlockSize">Block size</label>
+                                <input type="number" id="bootstrapBlockSize" name="bootstrap_block_size" placeholder="5" min="1" step="1">
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="form-block">
+                        <h2>6. Synthesis inputs</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="synthesisEffects">Historical effects <span class="optional-label">(optional)</span></label>
+                                <input type="text" id="synthesisEffects" name="synthesis_effects" placeholder="0.42,0.37,0.51">
+                            </div>
+                            <div class="form-group">
+                                <label for="synthesisSes">Historical standard errors <span class="optional-label">(optional)</span></label>
+                                <input type="text" id="synthesisSes" name="synthesis_ses" placeholder="0.09,0.08,0.11">
+                            </div>
+                        </div>
+                    </section>
+
+                    <div class="form-actions">
+                        <button type="submit" id="submitBtn">Evaluate</button>
+                    </div>
+                </form>
+
+                <aside class="tips-panel" aria-labelledby="tipsTitle">
+                    <p class="eyebrow">Run quality</p>
+                    <h2 id="tipsTitle">Assessment checks</h2>
+                    <ul>
+                        <li>Preservation fractions between 0.7 and 0.9 usually make the sensitivity plot informative.</li>
+                        <li>Synthesis is strongest when historical studies measure comparable QoS behaviour.</li>
+                        <li>Block bootstrap is useful when observations are temporally dependent.</li>
+                    </ul>
+                </aside>
+            </div>
+
+            <section class="callout-panel" aria-labelledby="assumptionsTitle">
+                <h2 id="assumptionsTitle">Assumptions and limitations</h2>
+                <p>Per-metric NI decisions are computed before aggregation. Preservation fraction controls strictness. Weighted mode depends on stakeholder weights and threshold choices. Block bootstrap is a dependence-aware robustness check, not full time-series modeling.</p>
+            </section>
+
+            <div class="error" id="error" role="alert" aria-live="assertive"></div>
+            <div class="spinner" id="spinner" role="status" aria-live="polite">
+                <span class="visually-hidden">Running evaluation</span>
+            </div>
+
+            <section class="results" id="results" aria-labelledby="resultsTitle" aria-live="polite">
+                <h2 id="resultsTitle" class="visually-hidden">Evaluation results</h2>
+                <div class="method-indicator" id="methodIndicator"></div>
+                <div class="ni-warning" id="niWarning" hidden>
+                    <h3>Fixed-margin NI not assessable</h3>
+                    <p id="niWarningText"></p>
+                    <dl>
+                        <div><dt>Metric</dt><dd id="niWarningMetric">-</dd></div>
+                        <div><dt>Orientation</dt><dd id="niWarningOrientation">-</dd></div>
+                        <div><dt>Placebo mean</dt><dd id="niWarningPlacebo">-</dd></div>
+                        <div><dt>Baseline mean</dt><dd id="niWarningBaseline">-</dd></div>
+                        <div><dt>M1</dt><dd id="niWarningM1">-</dd></div>
+                        <div><dt>M1 95% CI</dt><dd id="niWarningM1Ci">-</dd></div>
+                        <div><dt>Reason</dt><dd id="niWarningReason">-</dd></div>
+                    </dl>
+                </div>
+                <div class="result-grid" aria-label="Core result statistics">
+                    <div class="result-item">
+                        <div class="result-label">M1 (control-placebo effect) <span class="tip" tabindex="0" data-tip="Oriented active-control benefit over placebo used to derive the NI margin when valid." aria-label="Oriented active-control benefit over placebo used to derive the NI margin when valid.">i</span></div>
+                        <div class="result-value" id="m1Value">-</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">M1 95% CI <span class="tip" tabindex="0" data-tip="Uncertainty interval around M1. The lower bound drives conservative CI-based NI margin." aria-label="Uncertainty interval around M1.">i</span></div>
+                        <div class="result-value" id="m1CiValue">-</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Margin (d)</div>
+                        <div class="result-value" id="dniValue">-</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">CI upper bound</div>
+                        <div class="result-value" id="ciValue">-</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Baseline mean</div>
+                        <div class="result-value" id="baselineValue">-</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Treatment mean</div>
+                        <div class="result-value" id="treatmentValue">-</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Posterior P(effect &lt;= d) <span class="tip" tabindex="0" data-tip="Bayesian probability that worsening effect is within NI margin." aria-label="Bayesian probability that worsening effect is within NI margin.">i</span></div>
+                        <div class="result-value" id="posteriorProbValue">-</div>
+                    </div>
+                </div>
+
+                <div class="mini-kpi-row" id="miniKpiRow" aria-label="Run summary KPIs">
+                    <div class="mini-kpi"><span>Samples</span><strong id="kpiSamples">-</strong></div>
+                    <div class="mini-kpi"><span>Current method</span><strong id="kpiMethod">-</strong></div>
+                    <div class="mini-kpi"><span>Strictness (p)</span><strong id="kpiP">-</strong></div>
+                    <div class="mini-kpi"><span>Agreement</span><strong id="kpiAgreement">-</strong></div>
+                </div>
+
+                <div class="study-summary" id="studySummary">
+                    <h3>Study summary</h3>
+                    <p id="studySummaryText">Run an evaluation to generate an interpretation summary.</p>
+                </div>
+
+                <div class="study-summary" id="portfolioSummary">
+                    <h3>Portfolio verdict</h3>
+                    <p id="portfolioText">Multi-objective verdict appears after a multi-metric run.</p>
+                </div>
+
+                <div class="study-summary" id="settingsSummary">
+                    <h3>Run settings</h3>
+                    <p id="settingsText">Settings used for the run will appear here.</p>
+                </div>
+
+                <div class="study-summary" id="preprocessSummary">
+                    <h3>Preprocessing summary</h3>
+                    <p id="preprocessText">Preprocessing summary will appear here.</p>
+                </div>
+
+                <div id="verdict" class="verdict"></div>
+                <p id="verdictReasoning" class="verdict-reasoning"></p>
+
+                <div class="chart-grid">
+                    <div class="chart-panel full-width">
+                        <h3 id="primaryPlotTitle">Primary effect plot</h3>
+                        <div id="plot"></div>
+                        <p id="primarySummary" class="chart-summary">Shows treatment worsening effect, its 95% CI, and the NI margin.</p>
+                    </div>
+                    <div class="chart-panel full-width">
+                        <h3>Raw data over time</h3>
+                        <div class="raw-controls" aria-label="Raw data series visibility">
+                            <label class="choice-label"><input type="checkbox" id="togglePlacebo" checked> Placebo</label>
+                            <label class="choice-label"><input type="checkbox" id="toggleBaseline" checked> Baseline</label>
+                            <label class="choice-label"><input type="checkbox" id="toggleTreatment" checked> Treatment</label>
+                        </div>
+                        <div id="rawDataPlot" class="small-plot"></div>
+                        <p id="rawDataSummary" class="chart-summary">Displays placebo, baseline, and treatment metric trajectories over timesteps.</p>
+                    </div>
+                    <div class="chart-panel">
+                        <h3 id="comparisonTitle">Method comparison</h3>
+                        <div id="comparisonPlot" class="small-plot"></div>
+                        <p id="comparisonSummary" class="chart-summary">Compares each method's NI margin versus observed effect.</p>
+                    </div>
+                    <div class="chart-panel">
+                        <h3>Method agreement</h3>
+                        <div class="agreement-wrap">
+                            <table class="agreement-table">
+                                <caption>Method agreement table</caption>
+                                <thead>
+                                    <tr><th scope="col">Method</th><th scope="col">Result</th></tr>
+                                </thead>
+                                <tbody id="agreementBody"></tbody>
+                            </table>
+                            <p id="agreementConsensus" class="chart-summary">Consensus will appear after evaluation.</p>
+                        </div>
+                    </div>
+                    <div class="chart-panel">
+                        <h3>Bayesian posterior density</h3>
+                        <div id="posteriorPlot" class="small-plot"></div>
+                        <p id="posteriorSummary" class="chart-summary">Shows posterior uncertainty for worsening effect and NI threshold crossing.</p>
+                    </div>
+                    <div class="chart-panel full-width">
+                        <h3>Sensitivity heatmap</h3>
+                        <div id="sensitivityPlot" class="small-plot"></div>
+                        <p id="sensitivitySummary" class="chart-summary">Green cells indicate NI pass at that preservation fraction; red indicates fail.</p>
+                    </div>
+                </div>
+
+                <details class="json-section" id="rawJsonDetails">
+                    <summary>Raw JSON response</summary>
+                    <div class="report-checklist">
+                        <h3>Report includes</h3>
+                        <ul>
+                            <li>Executive summary with verdict and reasoning</li>
+                            <li>Input parameters used for analysis</li>
+                            <li>Core statistics: means, effect, CI, and NI margin</li>
+                            <li>Method-by-method agreement table</li>
+                            <li>Bootstrap CI details when enabled</li>
+                        </ul>
+                    </div>
+                    <pre id="rawJson" tabindex="0"></pre>
+                    <div class="actions">
+                        <button type="button" class="small copy-btn" id="copyBtn">Copy JSON</button>
+                        <button type="button" class="small download-btn" id="downloadBtn">Download JSON</button>
+                        <button type="button" class="small download-btn" id="reportBtn">Download Study Report (PDF)</button>
+                        <button type="button" class="small download-btn" id="packageBtn">Download Run Package (ZIP)</button>
+                    </div>
+                </details>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="/frontend/js/app.js" defer></script>
+</body>
+</html>

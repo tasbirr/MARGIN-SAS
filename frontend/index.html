@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="NI-SAS dashboard for uncertainty-aware non-inferiority evaluation of self-adaptive systems.">
+    <title>NI-SAS | Evidence Dashboard</title>
+    <link rel="stylesheet" href="/frontend/css/styles.css">
+</head>
+<body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <div class="container">
+        <header class="site-header">
+            <nav class="top-nav" aria-label="Primary navigation">
+                <a href="/dashboard" class="nav-brand">NI-SAS</a>
+                <div class="nav-actions">
+                    <div class="nav-links">
+                        <a href="/dashboard" class="active" aria-current="page">Home</a>
+                        <a href="/dashboard/evaluate">Evaluate</a>
+                        <a href="/dashboard/methods">Methods</a>
+                    </div>
+                    <div class="theme-toggle" aria-label="Colour theme">
+                        <button type="button" class="theme-option active" data-theme-option="light" aria-label="Use light mode" aria-pressed="true" title="Light mode">
+                            <svg aria-hidden="true" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="4"></circle>
+                                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+                            </svg>
+                        </button>
+                        <button type="button" class="theme-option" data-theme-option="dark" aria-label="Use dark mode" aria-pressed="false" title="Dark mode">
+                            <svg aria-hidden="true" viewBox="0 0 24 24">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <main id="main" class="home-page">
+            <section class="hero dashboard-hero" aria-labelledby="homeTitle">
+                <div class="hero-copy">
+                    <p class="eyebrow">Non-inferiority evaluation for SAS</p>
+                    <h1 id="homeTitle">NI-SAS Evidence Dashboard</h1>
+                    <p class="subtitle">A decision-support interface for comparing adaptation strategies against a trusted baseline under uncertainty.</p>
+                    <p class="hero-text">
+                        The dashboard combines fixed-margin 95-95 testing, synthesis, Bayesian NI,
+                        equivalence checks, and legacy mean-based diagnostics in one reproducible workflow.
+                    </p>
+                    <div class="hero-cta-row">
+                        <a class="primary-link" href="/dashboard/evaluate">Start evaluation</a>
+                        <a class="secondary-link" href="/dashboard/methods">Review methods</a>
+                    </div>
+                    <div class="hero-stats" aria-label="Dashboard capabilities">
+                        <div class="stat-tile">
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">Methods</div>
+                        </div>
+                        <div class="stat-tile">
+                            <div class="stat-value">3</div>
+                            <div class="stat-label">Input modes</div>
+                        </div>
+                        <div class="stat-tile">
+                            <div class="stat-value">95%</div>
+                            <div class="stat-label">Default CI</div>
+                        </div>
+                    </div>
+                </div>
+
+                <aside class="evidence-panel" aria-label="Evidence workflow preview">
+                    <div class="panel-heading">
+                        <span class="panel-kicker">Workflow</span>
+                        <h2>From QoS logs to verdict</h2>
+                    </div>
+                    <ol class="evidence-flow">
+                        <li>
+                            <span class="flow-index">01</span>
+                            <div>
+                                <strong>QoS datasets</strong>
+                                <span>Placebo, baseline, and treatment measurements</span>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="flow-index">02</span>
+                            <div>
+                                <strong>Effect estimation</strong>
+                                <span>Direction-aware worsening effect and confidence interval</span>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="flow-index">03</span>
+                            <div>
+                                <strong>Decision evidence</strong>
+                                <span>NI verdict, method agreement, sensitivity, and export package</span>
+                            </div>
+                        </li>
+                    </ol>
+                </aside>
+            </section>
+
+            <section class="process-section" aria-labelledby="processTitle">
+                <div class="section-header">
+                    <p class="eyebrow">Study design</p>
+                    <h2 id="processTitle">Evidence pipeline</h2>
+                    <p>Each run keeps the statistical assumptions visible from preprocessing through final interpretation.</p>
+                </div>
+                <div class="process-strip" aria-label="Study design sequence">
+                    <div class="study-step">QoS logs</div>
+                    <div class="study-step-arrow" aria-hidden="true">&darr;</div>
+                    <div class="study-step">Preprocessing</div>
+                    <div class="study-step-arrow" aria-hidden="true">&darr;</div>
+                    <div class="study-step">Effect estimation</div>
+                    <div class="study-step-arrow" aria-hidden="true">&darr;</div>
+                    <div class="study-step">Margin derivation</div>
+                    <div class="study-step-arrow" aria-hidden="true">&darr;</div>
+                    <div class="study-step">NI testing</div>
+                    <div class="study-step-arrow" aria-hidden="true">&darr;</div>
+                    <div class="study-step">Decision support</div>
+                </div>
+            </section>
+
+            <section class="margin-section" aria-labelledby="glanceTitle">
+                <div class="section-header">
+                    <p class="eyebrow">Framework</p>
+                    <h2 id="glanceTitle">What the evaluator reports</h2>
+                    <p>Outputs are structured for transparent, repeatable analysis of adaptation decisions.</p>
+                </div>
+                <div class="margin-grid">
+                    <article class="margin-card static-card">
+                        <div class="margin-card-header">
+                            <span class="margin-title">Primary NI decision</span>
+                            <span class="badge preferred">95-95</span>
+                        </div>
+                        <p>Uses the lower bound of the historical effect to derive a conservative NI margin.</p>
+                    </article>
+                    <article class="margin-card static-card">
+                        <div class="margin-card-header">
+                            <span class="margin-title">Method agreement</span>
+                            <span class="badge">Compare</span>
+                        </div>
+                        <p>Shows whether CI-based, synthesis, Bayesian, equivalence, and mean-based views agree.</p>
+                    </article>
+                    <article class="margin-card static-card">
+                        <div class="margin-card-header">
+                            <span class="margin-title">Reproducible exports</span>
+                            <span class="badge">Package</span>
+                        </div>
+                        <p>Returns JSON, PDF reporting, run metadata, and plot-ready data for audit trails.</p>
+                    </article>
+                </div>
+            </section>
+
+            <section class="workflow-grid" aria-label="Evaluation stages">
+                <article class="workflow-card">
+                    <div class="workflow-step">1</div>
+                    <h3>Load evidence</h3>
+                    <p>Use separate files, a mapped combined file, or pasted numeric values.</p>
+                </article>
+                <article class="workflow-card">
+                    <div class="workflow-step">2</div>
+                    <h3>Set assumptions</h3>
+                    <p>Choose metrics, preservation fraction, bootstrap mode, priors, and aggregation rules.</p>
+                </article>
+                <article class="workflow-card">
+                    <div class="workflow-step">3</div>
+                    <h3>Defend decisions</h3>
+                    <p>Interpret verdicts, confidence intervals, posterior probability, and sensitivity plots.</p>
+                </article>
+            </section>
+
+            <section class="callout-panel" aria-labelledby="calloutTitle">
+                <h2 id="calloutTitle">Research-ready decision support</h2>
+                <p>
+                    NI-SAS goes beyond mean comparison by preserving uncertainty, method assumptions,
+                    and multi-objective trade-offs in the same result package.
+                </p>
+            </section>
+        </main>
+
+        <footer class="site-footer">
+            <p>NI Framework for Assessing Decision-Making in Self-Adaptive Systems</p>
+            <p class="footer-muted">Prototype research tool &bull; Evidence-based QoS trade-off analysis</p>
+        </footer>
+    </div>
+    <script src="/frontend/js/app.js" defer></script>
+</body>
+</html>
