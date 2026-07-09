@@ -2,10 +2,6 @@
 
 MARGIN-SAS is a Flask REST API and dashboard for evaluating Self-Adaptive Systems (SAS) decision-making techniques using Non-Inferiority (NI) trial logic.
 
-# Code Download
-
-To download the code, Please use the Code option above and then select Download Zip option
-
 ## Demonstration Video
 
 A short demonstration video of the artefact is available here:
@@ -13,6 +9,10 @@ A short demonstration video of the artefact is available here:
 https://youtu.be/ZmMSxkEUH8U
 
 The video demonstrates the main workflow of MARGIN-SAS, including selecting the analysis method, configuring input data, choosing the QoS metric and preservation settings, running the evaluation, interpreting the non-inferiority outputs, and downloading the generated report.
+
+# Code Download
+
+To download the code, Please use the Code option above and then select Download Zip option
 
 ## Quick start (Windows, macOS, Linux)
 
