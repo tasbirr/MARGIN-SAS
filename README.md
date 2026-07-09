@@ -82,11 +82,8 @@ Tip: If you have multiple Python versions installed, prefer `py -3.13` (Windows)
 
 ## Using the datasets (submission layout)
 
-In the submission zip, the real datasets live in the sibling `Data/` folder at the top level:
+In the submission zip, the real datasets live in the Data.zip file at the top level:
 
-DataCodeLogbook/
-- MARGIN-SAS/
-- Data/
 
 From the `MARGIN-SAS/` folder, the dataset paths are:
 - ../Data/IoT data used
@@ -94,7 +91,7 @@ From the `MARGIN-SAS/` folder, the dataset paths are:
 - ../Data/NI_Trial_DataSet_RDMSim
 - ../Data/RDMSim data used
 
-IoT PriAwaRE (treatment) run using separate files:
+IoT Treatment run using separate files:
 1) In the UI choose `input_mode=separate_files`.
 2) Upload these three files from `../Data/IoT data used`:
   - IoTMECsattimestep_Placebo.txt
